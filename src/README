@@ -1,0 +1,8 @@
+Compile
+    $ make
+Remove
+    $ make clean
+Execute
+    $ ./route <path/to/input> <path/to/output>
+  e.g.
+    $ ./route ../testcase/ibm01.modified.txt ../output/ibm01.out
