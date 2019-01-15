@@ -337,6 +337,41 @@ void RipupReroute(const int ripup_edge, const int ripup_direction)
 
     priority_queue<int, vector<int>, CompareBoundingBox> reroute_order;
     for (const int net : ripup_nets) {
+        int size = nets_routing[net].size() - 1;
+        for (int i = 0; i < size; i++) {
+            int x1 = nets_routing[net][i] % grid_x;
+            int y1 = nets_routing[net][i] / grid_x;
+            int x2 = nets_routing[net][i + 1] % grid_x;
+            int y2 = nets_routing[net][i + 1] / grid_x;
+
+            int s, t, direction;
+            if (x1 == x2) {
+                s = y1 < y2 ? y1 : y2;
+                t = y1 < y2 ? y2 : y1;
+                direction = 1;
+            }
+            else {
+                s = x1 < x2 ? x1 : x2;
+                t = x1 < x2 ? x2 : x1;
+                direction = 0;
+            }
+
+            if (direction == 0) {
+                for (int j = s; j < t; j++) {
+                    int idx = j + y1 * (grid_x - 1);
+                    grids_h_nets[idx].erase(net);
+                    grids_h_cap[idx]--;
+                }
+            }
+            else {
+                for (int j = s; j < t; j++) {
+                    int idx = x1 + j * grid_x;
+                    grids_v_nets[idx].erase(net);
+                    grids_v_cap[idx]--;
+                }
+            }
+        }
+/*
         for (int y = 0; y < grid_y; y++) {
             for (int x = 0; x < grid_x - 1; x++) {
                 int idx = x + y * (grid_x - 1);
@@ -355,6 +390,7 @@ void RipupReroute(const int ripup_edge, const int ripup_direction)
                 }
             }
         }
+*/
 
         nets_routing[net] = vector<int>();
         reroute_order.push(net);
